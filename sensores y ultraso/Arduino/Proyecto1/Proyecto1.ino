@@ -1,8 +1,9 @@
-//#include <LiquidCrystal_I2C.h>
+#include <LiquidCrystal_I2C.h>
 #include <EEPROM.h>
 #include <LedControl.h>
 #include <Stepper.h>
-
+#include <Keypad.h>
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 
 // MATRIZ
@@ -46,14 +47,30 @@ int led4 = 15;
 int led5 = 16;
 Stepper stepper(100, 8, 9, 10, 11);
 
+//TECLADO
 
+const byte FILAS = 4;     // Filas
+const byte COLUMNAS = 4;  // Columnas
+int estadoIngre = 0;
+// Matriz de las teclas
+char teclas[FILAS][COLUMNAS] = {
+  {'1', '2', '3', 'A'}, {'4', '5', '6', 'B'}, {'7', '8', '9', 'C'}, {'*', '0', '#', 'D'}
+};
+// Asignación de las teclas a los pines de arduino
+byte filaPines[FILAS] = { 41, 42, 43, 44};
+byte columnaPines[COLUMNAS] = {23, 24, 25, 26};
+Keypad teclado = Keypad(makeKeymap(teclas), filaPines, columnaPines, FILAS, COLUMNAS);
 
 void setup() {
 
   Serial.begin(9600);
   // BUZZER
   pinMode(buzzer, OUTPUT);
+lcd.init();
 
+ lc.shutdown(0, false); //inicia apagado - dispositivo 1
+  lc.setIntensity(0, 15);
+  lc.clearDisplay(0);
   // sin driver
   pinMode(pin1, OUTPUT);
   pinMode(pin2, OUTPUT);
@@ -91,6 +108,7 @@ Serial.println(cantidad_fresa);
 Serial.println(cantidad_uva);
 Serial.println(cantidad_napolitano);
 Serial.println(costo);
+mensajeInicial();
 //Serial.println(EEPROM.get(0,cantidad_limon));
 //Serial.print("vainilla:");
 //Serial.println(EEPROM.get(10,cantidad_vainilla));
@@ -108,7 +126,7 @@ Serial.println(costo);
 }
 
 void loop() {
-    
+    ingresoTeclado();
     //estadocinta=true;
     //guardar_eeprom();
     //extraer_eeprom()
@@ -117,10 +135,81 @@ void loop() {
   ordenamiento(bolas, 3);
   cinta();
   limpiarmatriz();
- }
+  
 
+ }
+ 
 }
 
+
+void mensajeInicial() {
+  byte candado[] = {
+    B00000,
+    B01110,
+    B10001,
+    B10001,
+    B11111,
+    B11011,
+    B11111,
+    B11111
+  };
+  // MENSAJE INICIAL
+  lcd.clear();
+  // Fila 1
+  lcd.createChar(0, candado);
+  lcd.setCursor(2, 0);
+  lcd.write(byte(0));
+  lcd.setCursor(3, 0);
+  lcd.print("GRUPO 2");
+  lcd.setCursor(13, 0);
+  lcd.write(byte(0));
+  // Fila 2
+  lcd.setCursor(1, 1);
+  lcd.print("PROYECTO 1");
+  // ESPERAR
+  //esperar(10000);
+  delay(5000);
+}
+
+
+void ingresoTeclado(){
+bool escuchar = true;
+lcd.clear();//limpiamos la lcd p
+lcd.setCursor(0,0);//seteamos el cursos en la linea 0 
+lcd.print("Ingrese algun Valor");
+lcd.setCursor(0,1);//seteamos el cursor en la linea 1
+  while (escuchar) {
+  char tecla = teclado.getKey();
+    if (tecla) {
+      if (tecla == '*') {
+        //estado aceptacion 
+         lcd.clear();
+          lcd.setCursor(0, 0);
+          lcd.print("Ingreso");
+          lcd.setCursor(0, 1);
+          lcd.print("Correctamente");
+          
+          escuchar = false;
+        }
+       else if (tecla == '#') {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Ingreso");
+        lcd.setCursor(0, 1);
+        lcd.print("Cancelado");
+       
+        escuchar = false;
+      }
+      else {
+        //tokenIngresado += tecla;
+        lcd.print(tecla);
+      }
+    }
+
+
+  }
+  
+}
 
 void guardar_eeprom() {
   /////////////////Guardar en memoria eeprom..............
@@ -337,4 +426,13 @@ void iniciar() {
   digitalWrite(pin2, LOW);
   digitalWrite(pin3, HIGH);
   digitalWrite(pin4, LOW);
+}
+
+void esperar(long unsigned tiempo_ms) {
+  long unsigned tiempo_actual = millis();
+  while (true) {
+    if ((millis() - tiempo_actual) >= tiempo_ms) {
+      break;
+    }
+  }
 }
