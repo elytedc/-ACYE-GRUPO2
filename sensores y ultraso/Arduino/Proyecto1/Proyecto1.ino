@@ -309,7 +309,7 @@ token="";
             
            else if(contador_verificar==bolas_helado){
             bolas[contador_verificar-1] =token.toInt();
-               contador_verificar++;
+               contador_verificar=0;
               lcd.clear();
           lcd.setCursor(0, 0);
           lcd.print("Preparando");
