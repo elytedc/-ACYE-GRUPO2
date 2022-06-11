@@ -8,26 +8,28 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 // MATRIZ
 LedControl lc = LedControl(51, 52, 53, 1);
+String token;
 
 int TRIG = 30;
 int ECO = 31;
 int DURACION;
 int DISTANCIA;
 // variables EEPROM..............
-int cantidad_limon=0;
+int cantidad_limon=2;
 int cantidad_vainilla=0;
 int cantidad_fresa=0;
 int cantidad_uva=0;
 int cantidad_napolitano=0;
 float costo=0;
-
+int bolas_helado=0;
+bool escuchar2 = false;
 
 int bolas[3];
 // BUZZER
 int buzzer = 40;
 int conteo=0;
 bool estadomotor=true;
-bool estadocinta=true;
+bool estadocinta=false;
 // MOTOR SIN DRIVER
 int pin1 = 4;
 int pin2 = 5;
@@ -82,9 +84,9 @@ lcd.init();
   pinMode(led3, OUTPUT);
   pinMode(led4, OUTPUT);
   pinMode(led5, OUTPUT);
-  bolas[0] = 127;
-  bolas[1] = 124;
-  bolas[2] = 126;
+//  bolas[0] = 127;
+//  bolas[1] = 124;
+//  bolas[2] = 126;
  pinMode(TRIG, OUTPUT);
  pinMode(ECO, INPUT);   
 //Serial.print("valor gua");
@@ -127,6 +129,9 @@ mensajeInicial();
 
 void loop() {
     ingresoTeclado();
+     if (escuchar2==true) {
+      teclado_codigo();
+     }
     //estadocinta=true;
     //guardar_eeprom();
     //extraer_eeprom()
@@ -135,10 +140,7 @@ void loop() {
   ordenamiento(bolas, 3);
   cinta();
   limpiarmatriz();
-  
-
  }
- 
 }
 
 
@@ -161,7 +163,7 @@ void mensajeInicial() {
   lcd.write(byte(0));
   lcd.setCursor(3, 0);
   lcd.print("GRUPO 2");
-  lcd.setCursor(13, 0);
+  lcd.setCursor(10, 0);
   lcd.write(byte(0));
   // Fila 2
   lcd.setCursor(1, 1);
@@ -176,8 +178,9 @@ void ingresoTeclado(){
 bool escuchar = true;
 lcd.clear();//limpiamos la lcd p
 lcd.setCursor(0,0);//seteamos el cursos en la linea 0 
-lcd.print("Ingrese algun Valor");
+lcd.print("Elija un vaso:");
 lcd.setCursor(0,1);//seteamos el cursor en la linea 1
+
   while (escuchar) {
   char tecla = teclado.getKey();
     if (tecla) {
@@ -188,8 +191,38 @@ lcd.setCursor(0,1);//seteamos el cursor en la linea 1
           lcd.print("Ingreso");
           lcd.setCursor(0, 1);
           lcd.print("Correctamente");
+          if(token=="1"){
+            bolas_helado=1;
+            escuchar = false;
+            escuchar2 = true;
+          }
+          else if(token=="2"){
+            bolas_helado=2;
+            escuchar = false;
+            escuchar2 = true;
+            
+          }
+          else if(token=="3"){
+            bolas_helado=3;
+            escuchar = false;
+            escuchar2 = true;
+            
+          }
+          else{
+            bolas_helado=0;
+            token="";
+            lcd.clear();//limpiamos la lcd p
+            lcd.setCursor(0,0);//seteamos el cursos en la linea 0 
+            lcd.print("Vaso no existe");
+            lcd.setCursor(0,1);//seteamos el cursor en la linea 1
+            delay(1000);
+            lcd.clear();//limpiamos la lcd p
+            lcd.setCursor(0,0);//seteamos el cursos en la linea 0 
+            lcd.print("Elija un vaso:");
+            lcd.setCursor(0,1);//seteamos el cursor en la linea 1
+          }
           
-          escuchar = false;
+          
         }
        else if (tecla == '#') {
         lcd.clear();
@@ -197,18 +230,164 @@ lcd.setCursor(0,1);//seteamos el cursor en la linea 1
         lcd.print("Ingreso");
         lcd.setCursor(0, 1);
         lcd.print("Cancelado");
-       
         escuchar = false;
       }
       else {
-        //tokenIngresado += tecla;
-        lcd.print(tecla);
+        token += tecla;
+        lcd.print(token);
       }
     }
 
 
   }
   
+}
+
+
+
+void teclado_codigo(){
+  int contador_verificar=1;
+lcd.clear();//limpiamos la lcd p
+lcd.setCursor(0,0);//seteamos el cursos en la linea 0 
+lcd.print("Sabor No.1:");
+lcd.setCursor(0,1);//seteamos el cursor en la linea 1
+token="";
+  while (escuchar2) {
+  char tecla = teclado.getKey();
+    if (tecla) {
+      if (tecla == '*') {
+        //estado aceptacion 
+          
+          if(token=="123"||token=="124"||token=="125"||token=="126"||token=="127"){
+           
+            if(cantidad_limon==0 && token=="123"){
+                lcd.clear();
+                lcd.setCursor(0, 0);
+                lcd.print("existencias");
+                lcd.setCursor(0, 1);
+                lcd.print("limon 0");
+                token="";
+                delay(1000);
+            }
+            else if(cantidad_vainilla==0 && token=="124"){
+                lcd.clear();
+                lcd.setCursor(0, 0);
+                lcd.print("existencias");
+                lcd.setCursor(0, 1);
+                lcd.print("vainilla 0");
+                token="";
+                delay(1000);
+            }
+            else if(cantidad_fresa==0 && token=="125"){
+                lcd.clear();
+                lcd.setCursor(0, 0);
+                lcd.print("existencias");
+                lcd.setCursor(0, 1);
+                lcd.print("fresa 0");
+                token="";
+                delay(1000);
+            }
+            else if(cantidad_uva==0 && token=="126"){
+                lcd.clear();
+                lcd.setCursor(0, 0);
+                lcd.print("existencias");
+                lcd.setCursor(0, 1);
+                lcd.print("uva 0");
+                token="";
+                delay(1000);
+            }
+
+            else if(cantidad_napolitano==0 && token=="127"){
+                lcd.clear();
+                lcd.setCursor(0, 0);
+                lcd.print("existencias");
+                lcd.setCursor(0, 1);
+                lcd.print("napolitano 0");
+                token="";
+                delay(1000);
+            }
+            
+           else if(contador_verificar==bolas_helado){
+            bolas[contador_verificar-1] =token.toInt();
+               contador_verificar++;
+              lcd.clear();
+          lcd.setCursor(0, 0);
+          lcd.print("Preparando");
+          lcd.setCursor(0, 1);
+          lcd.print("Helado");
+          escuchar2=false;
+          token="";
+          estadocinta=true;
+          
+            }
+            else{
+              bolas[contador_verificar-1] =token.toInt();
+               if(token=="123"){
+                cantidad_limon--; }
+                else if(token=="124"){
+                cantidad_vainilla--; }
+                else if(token=="125"){
+                cantidad_fresa--; }
+                else if(token=="126"){
+                cantidad_uva--; }
+                else if(token=="127"){
+                cantidad_napolitano--; }
+
+              token="";
+            contador_verificar++;
+            }
+
+              if(contador_verificar<=3){
+                  lcd.clear();//limpiamos la lcd p
+              lcd.setCursor(0,0);//seteamos el cursos en la linea 0 
+              lcd.setCursor(1,0);//seteamos el cursor en la linea 1
+              lcd.print("Sabor No.");
+              lcd.setCursor(10,0);//seteamos el cursor en la linea 1
+              lcd.print((String)contador_verificar);
+              lcd.setCursor(11,0);//seteamos el cursor en la linea 1
+              lcd.print(":");
+              lcd.setCursor(0,1);//seteamos el cursor en la linea 1
+              }
+
+          }
+          else {
+          lcd.clear();
+          lcd.setCursor(0, 0);
+          lcd.print("No existe");
+          lcd.setCursor(0, 1);
+          lcd.print("helado");
+          token="";
+          delay(1000);
+          if(contador_verificar<=3){
+                  lcd.clear();//limpiamos la lcd p
+              lcd.setCursor(0,0);//seteamos el cursos en la linea 0 
+              lcd.setCursor(1,0);//seteamos el cursor en la linea 1
+              lcd.print("Sabor No.");
+              lcd.setCursor(10,0);//seteamos el cursor en la linea 1
+              lcd.print((String)contador_verificar);
+              lcd.setCursor(11,0);//seteamos el cursor en la linea 1
+              lcd.print(":");
+              lcd.setCursor(0,1);//seteamos el cursor en la linea 1
+              }
+          
+          }
+          
+        }
+       else if (tecla == '#') {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Ingreso");
+        lcd.setCursor(0, 1);
+        lcd.print("Cancelado");
+        escuchar2 = false;
+      }
+      else {
+        token += tecla;
+        lcd.print(tecla);
+      }
+    }
+
+  }
 }
 
 void guardar_eeprom() {
@@ -289,10 +468,6 @@ void cinta(){
     delay(3000);
     digitalWrite(led5, LOW);
     }
-
-
-
-
   }
   motores();
   estadomotor=true;
@@ -306,7 +481,6 @@ void cinta(){
     digitalWrite(TRIG, LOW);
     DURACION = pulseIn(ECO, HIGH);
     DISTANCIA = (DURACION * 0.034)/20;
-    
       }
   Serial.print("retirado");
 }
