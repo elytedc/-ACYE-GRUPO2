@@ -69,6 +69,7 @@ Keypad teclado = Keypad(makeKeymap(teclas), filaPines, columnaPines, FILAS, COLU
 void setup() {
 
   Serial.begin(9600);
+  Serial1.begin(9600);
   // BUZZER
   pinMode(buzzer, OUTPUT);
 lcd.init();
@@ -158,59 +159,73 @@ void conexion() {
 //  lcd.print("\\(^__^)/");
 
 char aux;
-String cadena;
+String cadena="";
   while (Serial.available()) {
     aux = Serial.read();
-    cadena+=aux;
-    if (aux=="A") {  // este es 123 limon
-      cantidad_limon= String(cadena).toInt();
-      aux="";
-      cadena="";
+    
+    if (aux=='R') {  // este es 123 limon
+      cadena+=aux;
+     Serial1.print("RR");
       //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
+      cadena1();
+      Serial1.print(envio);
+      Serial.print(envio);
+  }else  if (aux=='A') {  // este es 123 limon
+      delay(10);
+      String value=cadena;
+     delay(10);
+      //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
+      Serial1.println("valor llegada");
+      Serial1.println(value);
+      Serial1.println("Nuevo Valor");
+      long value2=value.toInt();
+      Serial1.println(value2);
+      Serial1.println(" ");
+      aux=' ';
+      cadena="";
       cadena1();
       Serial.print(envio);
   }
 
-    else if (aux=="B") {  // este es 124 VAINILLA
+    else if (aux=='B') {  // este es 124 VAINILLA
       cantidad_vainilla= String(cadena).toInt();
-      aux="";
+      aux=' ';
       cadena="";
       //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
       cadena1();
       Serial.print(envio);
   }
 
-    else if (aux=="C") {  // este es 125
+    else if (aux=='C') {  // este es 125
       cantidad_fresa= String(cadena).toInt();
-      aux="";
+      aux=' ';
       cadena="";
       //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
       cadena1();
       Serial.print(envio);
 }
 
-    else if (aux=="D") {  // este es 126 uva
+    else if (aux=='D') {  // este es 126 uva
       cantidad_uva= String(cadena).toInt();
-      aux="";
+      aux=' ';
       cadena="";
       //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
       cadena1();
       Serial.print(envio);
   }
 
-   else if (aux=="E") {  // este es 127  napolitano
+   else if (aux=='E') {  // este es 127  napolitano
       cantidad_napolitano= String(cadena).toInt();
-      aux="";
+      aux=' ';
       cadena="";
       //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
       cadena1();
       Serial.print(envio);
  }
 
-     else if (aux==",") { // valido ,
+     else if (aux==',') { // valido ,
       String h; // ignorar coma ,
      }
-    
     else{
       cadena+=aux;
     }
@@ -224,7 +239,7 @@ String cadena;
 
 
 void cadena1() {
-envio=String(cantidad_limon)+","+String(cantidad_vainilla)+","+String(cantidad_fresa)+","+String(cantidad_uva)+","+String(cantidad_napolitano)+","+String(costo)+","+String(temperatura);
+  envio=(String)cantidad_limon+","+(String)cantidad_vainilla+","+(String)(cantidad_fresa)+","+(String)cantidad_uva+","+(String)cantidad_napolitano+","+(String)costo+","+(String)temperatura;
  
 }
 
