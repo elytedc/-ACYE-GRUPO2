@@ -155,6 +155,7 @@ if (estaPresionado(inicio)) {
   cinta();
   limpiarmatriz();
  }
+ estadoF=false;
 }
 else {
   conexion();
