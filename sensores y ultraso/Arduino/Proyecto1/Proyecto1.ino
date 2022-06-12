@@ -8,6 +8,8 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 // MATRIZ
 LedControl lc = LedControl(51, 52, 53, 1);
+
+int inicio = A0;
 String token;
 int val;
 int tem= A3;
@@ -16,7 +18,7 @@ int TRIG = 30;
 int ECO = 31;
 int DURACION;
 int DISTANCIA;
-int estadoF=0;
+bool estadoF=false;
 float temperatura;
 // variables EEPROM..............
 int cantidad_limon=3;
@@ -135,7 +137,13 @@ mensajeInicial();
 
 void loop() {
   conexion();
-  if(estadoF!=0){
+  
+if (estaPresionado(inicio)) {
+      estadoF=true;
+      
+    }
+  
+  if(estadoF==true){
    ingresoTeclado();
      if (escuchar2==true) {
       teclado_codigo();
@@ -148,9 +156,17 @@ void loop() {
   limpiarmatriz();
  }
 }
-cambioEstado();
-
+else {
+  conexion();
 }
+}
+
+
+bool estaPresionado(int idBtn) {
+  int estadoBtn = digitalRead(idBtn);
+  return (estadoBtn == HIGH);
+}
+
 
 void cambioEstado(){
   
@@ -274,6 +290,7 @@ String cadena="";
     val=analogRead(A1);
        float mv=(val/1024.0)*5000;
        temperatura=mv/10;
+       Serial1.print(envio);
   }
 }
 
@@ -377,7 +394,7 @@ lcd.setCursor(0,1);//seteamos el cursor en la linea 1
         lcd.print(token);
       }
     }
-
+conexion();
 
   }
   
@@ -542,7 +559,7 @@ token="";
         lcd.print(tecla);
       }
     }
-
+conexion();
   }
 }
 
