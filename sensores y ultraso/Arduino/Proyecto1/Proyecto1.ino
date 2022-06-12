@@ -11,7 +11,7 @@ LedControl lc = LedControl(51, 52, 53, 1);
 String token;
 int val;
 int tem= A3;
-
+String envio;
 int TRIG = 30;
 int ECO = 31;
 int DURACION;
@@ -143,49 +143,90 @@ void loop() {
 //  limpiarmatriz();
 // }
 
-       
-
-       
- if (Serial.available() > 0) {
-      entrada = Serial.read();
-      if (entrada == 'A') {
-        
-        Serial.print("Can,Di,Temp");//Enviar todos los valors
-      }else if(entrada=="123"){
-        cantidad_limon= String(entrada).toInt();
-        
-        //Aqui estariamos recibiendo la nueva cantidad del indicado que seria en este caso el primero
-        Serial.print((String)cantidad_limon);
-      }else if(entrada=="124"){
-        cantidad_vainilla= String(entrada).toInt();
-        
-        Serial.print((String)cantidad_vainilla);
-      }else if(entrada=="125"){
-        cantidad_fresa= String(entrada).toInt();
-        
-        Serial.print((String)cantidad_fresa);
-      }else if(entrada=="126"){
-        cantidad_uva= String(entrada).toInt();
-        
-        Serial.print((String)cantidad_uva);
-      }else if(entrada=="127"){
-        cantidad_napolitano= String(entrada).toInt();
-        
-        Serial.print((String)cantidad_napolitano);//Hacer un string con cada cantidad Cant1,cant2,cant3,cant4,cant5,Dinero,Temp
-      }
-
-
-       val=analogRead(A1);
-       float mv=(val/1024.0)*5000;
-       temperatura=mv/10;
-       
-     Serial.print((String)costo);//Hacer un string con cada cantidad Cant1,cant2,cant3,cant4,cant5,Dinero,Temp
-     Serial.print((String)temperatura);//Hacer un string con cada cantidad Cant1,cant2,cant3,cant4,cant5,Dinero,Temp
-
-      
-    }
+conexion();
 }
 
+
+void conexion() {
+//// MENSAJE CONEXION EXITOSA
+//  lcd.clear();
+//  // Fila 1
+//  lcd.setCursor(0, 0);
+//  lcd.print("CONEXION EXITOSA");
+//  // Fila 2
+//  lcd.setCursor(4, 1);
+//  lcd.print("\\(^__^)/");
+
+char aux;
+String cadena;
+  while (Serial.available()) {
+    aux = Serial.read();
+    cadena+=aux;
+    if (aux=="A") {  // este es 123 limon
+      cantidad_limon= String(cadena).toInt();
+      aux="";
+      cadena="";
+      //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
+      cadena1();
+      Serial.print(envio);
+  }
+
+    else if (aux=="B") {  // este es 124 VAINILLA
+      cantidad_vainilla= String(cadena).toInt();
+      aux="";
+      cadena="";
+      //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
+      cadena1();
+      Serial.print(envio);
+  }
+
+    else if (aux=="C") {  // este es 125
+      cantidad_fresa= String(cadena).toInt();
+      aux="";
+      cadena="";
+      //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
+      cadena1();
+      Serial.print(envio);
+}
+
+    else if (aux=="D") {  // este es 126 uva
+      cantidad_uva= String(cadena).toInt();
+      aux="";
+      cadena="";
+      //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
+      cadena1();
+      Serial.print(envio);
+  }
+
+   else if (aux=="E") {  // este es 127  napolitano
+      cantidad_napolitano= String(cadena).toInt();
+      aux="";
+      cadena="";
+      //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
+      cadena1();
+      Serial.print(envio);
+ }
+
+     else if (aux==",") { // valido ,
+      String h; // ignorar coma ,
+     }
+    
+    else{
+      cadena+=aux;
+    }
+
+
+    val=analogRead(A1);
+       float mv=(val/1024.0)*5000;
+       temperatura=mv/10;
+  }
+}
+
+
+void cadena1() {
+envio=String(cantidad_limon)+","+String(cantidad_vainilla)+","+String(cantidad_fresa)+","+String(cantidad_uva)+","+String(cantidad_napolitano)+","+String(costo)+","+String(temperatura);
+ 
+}
 
 void mensajeInicial() {
   byte candado[] = {
