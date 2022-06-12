@@ -9,17 +9,20 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 // MATRIZ
 LedControl lc = LedControl(51, 52, 53, 1);
 String token;
+int val;
+int tem= A3;
 
 int TRIG = 30;
 int ECO = 31;
 int DURACION;
 int DISTANCIA;
+float temperatura;
 // variables EEPROM..............
-int cantidad_limon=2;
-int cantidad_vainilla=0;
-int cantidad_fresa=0;
-int cantidad_uva=0;
-int cantidad_napolitano=0;
+int cantidad_limon=3;
+int cantidad_vainilla=3;
+int cantidad_fresa=3;
+int cantidad_uva=3;
+int cantidad_napolitano=3;
 float costo=0;
 int bolas_helado=0;
 bool escuchar2 = false;
@@ -73,6 +76,7 @@ lcd.init();
  lc.shutdown(0, false); //inicia apagado - dispositivo 1
   lc.setIntensity(0, 15);
   lc.clearDisplay(0);
+  pinMode(tem, INPUT);
   // sin driver
   pinMode(pin1, OUTPUT);
   pinMode(pin2, OUTPUT);
@@ -101,9 +105,8 @@ lcd.init();
 //EEPROM.put(30, cantidad_uva);
 //EEPROM.put(40, cantidad_napolitano);
 //EEPROM.put(50, costo);
-
+//guardar_eeprom();
 extraer_eeprom();
-
 //Serial.println(cantidad_limon);
 //Serial.println(cantidad_vainilla);
 //Serial.println(cantidad_fresa);
@@ -128,35 +131,61 @@ mensajeInicial();
 }
 
 void loop() {
-   /* ingresoTeclado();
-     if (escuchar2==true) {
-      teclado_codigo();
-     }
+//    ingresoTeclado();
+//     if (escuchar2==true) {
+//      teclado_codigo();
+//     }
+//
+// if (estadocinta==true) {
+//  // ordenamiento-          bubble sort
+//  ordenamiento(bolas, 3);
+//  cinta();
+//  limpiarmatriz();
+// }
 
- if (estadocinta==true) {
-  // ordenamiento-          bubble sort
-  ordenamiento(bolas, 3);
-  cinta();
-  limpiarmatriz();
- }*/
+       
+
+       
  if (Serial.available() > 0) {
       entrada = Serial.read();
       if (entrada == 'A') {
+        
         Serial.print("Can,Di,Temp");//Enviar todos los valors
       }else if(entrada=="123"){
+        cantidad_limon= String(entrada).toInt();
+        
         //Aqui estariamos recibiendo la nueva cantidad del indicado que seria en este caso el primero
-        Serial.print("Can,Di,Temp");
+        Serial.print((String)cantidad_limon);
       }else if(entrada=="124"){
-        Serial.print("Can,Di,Temp");
+        cantidad_vainilla= String(entrada).toInt();
+        
+        Serial.print((String)cantidad_vainilla);
       }else if(entrada=="125"){
-        Serial.print("Can,Di,Temp");
+        cantidad_fresa= String(entrada).toInt();
+        
+        Serial.print((String)cantidad_fresa);
       }else if(entrada=="126"){
-        Serial.print("Can,Di,Temp");
+        cantidad_uva= String(entrada).toInt();
+        
+        Serial.print((String)cantidad_uva);
       }else if(entrada=="127"){
-        Serial.print("Can,Di,Temp");//Hacer un string con cada cantidad Cant1,cant2,cant3,cant4,cant5,Dinero,Temp
+        cantidad_napolitano= String(entrada).toInt();
+        
+        Serial.print((String)cantidad_napolitano);//Hacer un string con cada cantidad Cant1,cant2,cant3,cant4,cant5,Dinero,Temp
       }
+
+
+       val=analogRead(A1);
+       float mv=(val/1024.0)*5000;
+       temperatura=mv/10;
+       
+     Serial.print((String)costo);//Hacer un string con cada cantidad Cant1,cant2,cant3,cant4,cant5,Dinero,Temp
+     Serial.print((String)temperatura);//Hacer un string con cada cantidad Cant1,cant2,cant3,cant4,cant5,Dinero,Temp
+
+      
     }
 }
+
 
 void mensajeInicial() {
   byte candado[] = {
@@ -323,6 +352,19 @@ token="";
             
            else if(contador_verificar==bolas_helado){
             bolas[contador_verificar-1] =token.toInt();
+            if(token=="123"){
+                cantidad_limon--; }
+                else if(token=="124"){
+                cantidad_vainilla--; }
+                else if(token=="125"){
+                cantidad_fresa--; }
+                else if(token=="126"){
+                cantidad_uva--; }
+                else if(token=="127"){
+                cantidad_napolitano--; }
+              costo+=6;
+              guardar_eeprom();
+            
                contador_verificar=0;
               lcd.clear();
           lcd.setCursor(0, 0);
@@ -348,10 +390,10 @@ token="";
                 else if(token=="127"){
                 cantidad_napolitano--; }
               costo+=6;
+              guardar_eeprom();
               token="";
             contador_verificar++;
-            guardar_eeprom();
-            delay(100);
+            
             }
 
               if(contador_verificar<=3){
@@ -498,6 +540,7 @@ void cinta(){
               lcd.print("Retire su helado");
               lcd.setCursor(0,1);//seteamos el cursor en la linea 1
               lcd.print("distancia:");
+              lcd.setCursor(12,1);//seteamos el cursor en la linea 1
    while (DISTANCIA <= 30) { 
     digitalWrite(TRIG, LOW);
     delayMicroseconds(2);
@@ -511,7 +554,6 @@ void cinta(){
     lcd.print(String(DISTANCIA));
     lcd.setCursor(12,1);//seteamos el cursor en la linea 1
       }
-  Serial.print("retirado");
 }
 
 
