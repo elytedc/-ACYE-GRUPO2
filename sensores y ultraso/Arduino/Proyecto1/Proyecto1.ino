@@ -39,7 +39,7 @@ int tiempo = 40;
 int contador_motor = 1;
 int conaux = 0;
 bool estado_motor = false;
-
+char entrada;
 // MOTOR CON DRIVER
 int direccion = 1;
 int led1 = 12;
@@ -104,12 +104,12 @@ lcd.init();
 
 extraer_eeprom();
 
-Serial.println(cantidad_limon);
-Serial.println(cantidad_vainilla);
-Serial.println(cantidad_fresa);
-Serial.println(cantidad_uva);
-Serial.println(cantidad_napolitano);
-Serial.println(costo);
+//Serial.println(cantidad_limon);
+//Serial.println(cantidad_vainilla);
+//Serial.println(cantidad_fresa);
+//Serial.println(cantidad_uva);
+//Serial.println(cantidad_napolitano);
+//Serial.println(costo);
 mensajeInicial();
 //Serial.println(EEPROM.get(0,cantidad_limon));
 //Serial.print("vainilla:");
@@ -128,7 +128,7 @@ mensajeInicial();
 }
 
 void loop() {
-    ingresoTeclado();
+   /* ingresoTeclado();
      if (escuchar2==true) {
       teclado_codigo();
      }
@@ -138,9 +138,25 @@ void loop() {
   ordenamiento(bolas, 3);
   cinta();
   limpiarmatriz();
- }
+ }*/
+ if (Serial.available() > 0) {
+      entrada = Serial.read();
+      if (entrada == 'A') {
+        Serial.print("Can,Di,Temp");//Enviar todos los valors
+      }else if(entrada=="123"){
+        //Aqui estariamos recibiendo la nueva cantidad del indicado que seria en este caso el primero
+        Serial.print("Can,Di,Temp");
+      }else if(entrada=="124"){
+        Serial.print("Can,Di,Temp");
+      }else if(entrada=="125"){
+        Serial.print("Can,Di,Temp");
+      }else if(entrada=="126"){
+        Serial.print("Can,Di,Temp");
+      }else if(entrada=="127"){
+        Serial.print("Can,Di,Temp");//Hacer un string con cada cantidad Cant1,cant2,cant3,cant4,cant5,Dinero,Temp
+      }
+    }
 }
-
 
 void mensajeInicial() {
   byte candado[] = {
