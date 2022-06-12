@@ -132,9 +132,7 @@ void loop() {
      if (escuchar2==true) {
       teclado_codigo();
      }
-    //estadocinta=true;
-    //guardar_eeprom();
-    //extraer_eeprom()
+
  if (estadocinta==true) {
   // ordenamiento-          bubble sort
   ordenamiento(bolas, 3);
@@ -318,6 +316,7 @@ token="";
           escuchar2=false;
           token="";
           estadocinta=true;
+          break;
           
             }
             else{
@@ -332,9 +331,11 @@ token="";
                 cantidad_uva--; }
                 else if(token=="127"){
                 cantidad_napolitano--; }
-
+              costo+=6;
               token="";
             contador_verificar++;
+            guardar_eeprom();
+            delay(100);
             }
 
               if(contador_verificar<=3){
@@ -434,14 +435,14 @@ void cinta(){
      motores();
      estadomotor=true;
     digitalWrite(led1, HIGH);
-    delay(3000);
+    delay(2000);
     digitalWrite(led1, LOW);
     }
     else if (bolas[i]==124) {
      motores();
      estadomotor=true;
     digitalWrite(led2, HIGH);
-    delay(3000);
+    delay(2000);
     digitalWrite(led2, LOW);
     }
 
@@ -449,7 +450,7 @@ void cinta(){
      motores();
      estadomotor=true;
     digitalWrite(led3, HIGH);
-    delay(3000);
+    delay(2000);
     digitalWrite(led3, LOW);
     }
 
@@ -457,7 +458,7 @@ void cinta(){
      motores();
      estadomotor=true;
     digitalWrite(led4, HIGH);
-    delay(3000);
+    delay(2000);
     digitalWrite(led4, LOW);
     }
 
@@ -465,7 +466,7 @@ void cinta(){
      motores();
      estadomotor=true;
     digitalWrite(led5, HIGH);
-    delay(3000);
+    delay(2000);
     digitalWrite(led5, LOW);
     }
   }
@@ -473,7 +474,15 @@ void cinta(){
   estadomotor=true;
   estadocinta=false;
   sonarAlarma();
-   while (DISTANCIA <= 25) { 
+  DURACION = pulseIn(ECO, HIGH);
+  DISTANCIA = (DURACION * 0.034)/20;
+  lcd.clear();//limpiamos la lcd p
+              lcd.setCursor(0,0);//seteamos el cursos en la linea 0 
+              lcd.setCursor(0,0);//seteamos el cursor en la linea 1
+              lcd.print("Retire su helado");
+              lcd.setCursor(0,1);//seteamos el cursor en la linea 1
+              lcd.print("distancia:");
+   while (DISTANCIA <= 30) { 
     digitalWrite(TRIG, LOW);
     delayMicroseconds(2);
     digitalWrite(TRIG, HIGH);
@@ -481,6 +490,10 @@ void cinta(){
     digitalWrite(TRIG, LOW);
     DURACION = pulseIn(ECO, HIGH);
     DISTANCIA = (DURACION * 0.034)/20;
+//    lcd.print("DISTANCIA:");
+//    lcd.setCursor(4,1);//seteamos el cursor en la linea 1
+    lcd.print(String(DISTANCIA));
+    lcd.setCursor(12,1);//seteamos el cursor en la linea 1
       }
   Serial.print("retirado");
 }
