@@ -143,7 +143,7 @@ if (estaPresionado(inicio)) {
       
     }
   
-  if(estadoF==true){
+ 
    ingresoTeclado();
      if (escuchar2==true) {
       teclado_codigo();
@@ -156,10 +156,10 @@ if (estaPresionado(inicio)) {
   limpiarmatriz();
  }
  estadoF=false;
-}
-else {
+
+
   conexion();
-}
+
 }
 
 
