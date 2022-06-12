@@ -16,6 +16,7 @@ int TRIG = 30;
 int ECO = 31;
 int DURACION;
 int DISTANCIA;
+int estadoF=0;
 float temperatura;
 // variables EEPROM..............
 int cantidad_limon=3;
@@ -106,7 +107,7 @@ lcd.init();
 //EEPROM.put(30, cantidad_uva);
 //EEPROM.put(40, cantidad_napolitano);
 //EEPROM.put(50, costo);
-//guardar_eeprom();
+//guardar_eeprom(); 
 extraer_eeprom();
 //Serial.println(cantidad_limon);
 //Serial.println(cantidad_vainilla);
@@ -114,6 +115,7 @@ extraer_eeprom();
 //Serial.println(cantidad_uva);
 //Serial.println(cantidad_napolitano);
 //Serial.println(costo);
+
 mensajeInicial();
 //Serial.println(EEPROM.get(0,cantidad_limon));
 //Serial.print("vainilla:");
@@ -132,22 +134,27 @@ mensajeInicial();
 }
 
 void loop() {
-//    ingresoTeclado();
-//     if (escuchar2==true) {
-//      teclado_codigo();
-//     }
-//
-// if (estadocinta==true) {
-//  // ordenamiento-          bubble sort
-//  ordenamiento(bolas, 3);
-//  cinta();
-//  limpiarmatriz();
-// }
+  conexion();
+  if(estadoF!=0){
+   ingresoTeclado();
+     if (escuchar2==true) {
+      teclado_codigo();
+     }
+    
+ if (estadocinta==true) {
+  // ordenamiento-          bubble sort
+  ordenamiento(bolas, 3);
+  cinta();
+  limpiarmatriz();
+ }
+}
+cambioEstado();
 
-conexion();
 }
 
-
+void cambioEstado(){
+  
+}
 void conexion() {
 //// MENSAJE CONEXION EXITOSA
 //  lcd.clear();
@@ -171,54 +178,86 @@ String cadena="";
       Serial1.print(envio);
       Serial.print(envio);
   }else  if (aux=='A') {  // este es 123 limon
-      delay(10);
-      String value=cadena;
-     delay(10);
+     
+  
+     delay(50);
       //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
-      Serial1.println("valor llegada");
-      Serial1.println(value);
-      Serial1.println("Nuevo Valor");
-      long value2=value.toInt();
-      Serial1.println(value2);
-      Serial1.println(" ");
+      
+      
+      long value2=cadena.toInt();
+      delay(50);
+      cantidad_limon=value2;
       aux=' ';
       cadena="";
+      Serial1.println("nuevo");
+      Serial1.println(cantidad_limon);
       cadena1();
       Serial.print(envio);
   }
 
     else if (aux=='B') {  // este es 124 VAINILLA
-      cantidad_vainilla= String(cadena).toInt();
+       
+      delay(50);
+      //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
+      
+      
+      long value2=cadena.toInt();
+      delay(50);
+      cantidad_vainilla=value2;
       aux=' ';
       cadena="";
-      //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
+      Serial1.println("nuevo");
+      Serial1.println(cantidad_vainilla);
       cadena1();
       Serial.print(envio);
   }
 
     else if (aux=='C') {  // este es 125
-      cantidad_fresa= String(cadena).toInt();
+      
+      delay(50);
+      //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
+      
+      
+      long value2=cadena.toInt();
+      delay(50);
+      cantidad_fresa=value2;
       aux=' ';
       cadena="";
-      //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
+      Serial1.println("nuevo");
+      Serial1.println(cantidad_vainilla);
       cadena1();
       Serial.print(envio);
 }
 
     else if (aux=='D') {  // este es 126 uva
-      cantidad_uva= String(cadena).toInt();
+   
+      delay(50);
+      //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
+      
+      
+      long value2=cadena.toInt();
+      delay(50);
+      cantidad_uva=value2;
       aux=' ';
       cadena="";
-      //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
+      Serial1.println("nuevo");
+      Serial1.println(cantidad_vainilla);
       cadena1();
       Serial.print(envio);
   }
 
    else if (aux=='E') {  // este es 127  napolitano
-      cantidad_napolitano= String(cadena).toInt();
+      delay(50);
+      //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
+      
+      
+      long value2=cadena.toInt();
+      delay(50);
+      cantidad_napolitano=value2;
       aux=' ';
       cadena="";
-      //envio de datos en formato Cant1,cant2,cant3,cant4,cant5,Dinero,Temp 
+      Serial1.println("nuevo");
+      Serial1.println(cantidad_vainilla);
       cadena1();
       Serial.print(envio);
  }
@@ -228,9 +267,10 @@ String cadena="";
      }
     else{
       cadena+=aux;
+      delay(20);
     }
 
-
+ 
     val=analogRead(A1);
        float mv=(val/1024.0)*5000;
        temperatura=mv/10;
@@ -239,6 +279,7 @@ String cadena="";
 
 
 void cadena1() {
+  delay(100);
   envio=(String)cantidad_limon+","+(String)cantidad_vainilla+","+(String)(cantidad_fresa)+","+(String)cantidad_uva+","+(String)cantidad_napolitano+","+(String)costo+","+(String)temperatura;
  
 }
