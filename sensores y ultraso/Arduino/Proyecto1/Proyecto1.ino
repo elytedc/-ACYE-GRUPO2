@@ -41,7 +41,7 @@ int pin1 = 4;
 int pin2 = 5;
 int pin3 = 6;
 int pin4 = 7;
-int tiempo = 40;
+int tiempo = 250;
 int contador_motor = 1;
 int conaux = 0;
 bool estado_motor = false;
@@ -608,14 +608,14 @@ void cinta(){
      motores();
      estadomotor=true;
     digitalWrite(led1, HIGH);
-    delay(2000);
+    delay(3500);
     digitalWrite(led1, LOW);
     }
     else if (bolas[i]==124) {
      motores();
      estadomotor=true;
     digitalWrite(led2, HIGH);
-    delay(2000);
+    delay(3500);
     digitalWrite(led2, LOW);
     }
 
@@ -623,7 +623,7 @@ void cinta(){
      motores();
      estadomotor=true;
     digitalWrite(led3, HIGH);
-    delay(2000);
+    delay(3500);
     digitalWrite(led3, LOW);
     }
 
@@ -631,7 +631,7 @@ void cinta(){
      motores();
      estadomotor=true;
     digitalWrite(led4, HIGH);
-    delay(2000);
+    delay(3500);
     digitalWrite(led4, LOW);
     }
 
@@ -639,24 +639,52 @@ void cinta(){
      motores();
      estadomotor=true;
     digitalWrite(led5, HIGH);
-    delay(2000);
+    delay(3500);
     digitalWrite(led5, LOW);
     }
   }
-  motores();
-  estadomotor=true;
+
+    digitalWrite(TRIG, LOW);
+    delayMicroseconds(2);
+    digitalWrite(TRIG, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIG, LOW);
+    DURACION = pulseIn(ECO, HIGH);
+    DISTANCIA = (DURACION * 0.034)/20;
+
+  while (DISTANCIA !=0) { 
+    digitalWrite(TRIG, LOW);
+    delayMicroseconds(2);
+    digitalWrite(TRIG, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIG, LOW);
+    DURACION = pulseIn(ECO, HIGH);
+    DISTANCIA = (DURACION * 0.034)/20;
+    if (DISTANCIA==0) {
+      break;
+    }
+    estadomotor=true;
+    motores();
+    if (DISTANCIA==0) {
+      break;
+    }
+      }
+  
+
+  
   estadocinta=false;
   sonarAlarma();
-  DURACION = pulseIn(ECO, HIGH);
-  DISTANCIA = (DURACION * 0.034)/20;
+//  DURACION = pulseIn(ECO, HIGH);
+//  DISTANCIA = (DURACION * 0.034)/20;
   lcd.clear();//limpiamos la lcd p
               lcd.setCursor(0,0);//seteamos el cursos en la linea 0 
               lcd.setCursor(0,0);//seteamos el cursor en la linea 1
-              lcd.print("Retire su helado");
+              //lcd.print("Retire su helado");
+              lcd.print("servido,buen dia");
               lcd.setCursor(0,1);//seteamos el cursor en la linea 1
               lcd.print("distancia:");
               lcd.setCursor(12,1);//seteamos el cursor en la linea 1
-   while (DISTANCIA <= 30) { 
+   while (DISTANCIA <= 10) { 
     digitalWrite(TRIG, LOW);
     delayMicroseconds(2);
     digitalWrite(TRIG, HIGH);
